@@ -12,6 +12,7 @@
 
 package xyz.stroyer.StaffPlus.Player;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import xyz.stroyer.StaffPlus.GUI.GUI;
 
@@ -20,16 +21,25 @@ import java.util.List;
 import java.util.UUID;
 
 public class SPlayer {
-    private Player BukkitPlayer;
+    private UUID UUID;
     private List<GUI> activeGUIs;
 
+    private static List<SPlayer> SPlayerList;
+
     public SPlayer(Player BukkitPlayer){
-        this.BukkitPlayer = BukkitPlayer;
+        this.UUID = BukkitPlayer.getUniqueId();
         this.activeGUIs = new ArrayList<>();
+        SPlayerList.add(this);
+    }
+
+    public SPlayer(UUID UUID){
+        this.UUID = UUID;
+        this.activeGUIs = new ArrayList<>();
+        SPlayerList.add(this);
     }
 
     public Player getBukkitPlayer(){
-        return this.BukkitPlayer;
+        return Bukkit.getPlayer(this.UUID);
     }
 
     public List<GUI> getActiveGUIs(){
@@ -37,7 +47,7 @@ public class SPlayer {
     }
 
     public void closeCurrentGUI(){
-        this.BukkitPlayer.closeInventory();
+        this.getBukkitPlayer().closeInventory();
         this.activeGUIs.clear();
     }
 
@@ -45,5 +55,36 @@ public class SPlayer {
         this.closeCurrentGUI();
         this.activeGUIs.add(gui);
         this.getBukkitPlayer().openInventory(gui.getInventory());
+    }
+
+    public static void generateSPlayers(){
+        SPlayerList = new ArrayList<>();
+    }
+
+    public UUID getUUID(){
+    return this.UUID;
+    }
+
+    public static SPlayer getSPlayer(Player player){
+        for(SPlayer sp : SPlayerList){
+            if(sp.getUUID().equals(player.getUniqueId())){
+                return sp;
+            }
+        }
+        return null;
+    }
+
+    public static boolean hasSPlayer(Player player){
+        for (SPlayer sp : SPlayerList){
+            if(sp.getUUID().equals(player.getUniqueId())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void inventoryClosed(){
+        this.closeCurrentGUI();
+        this.activeGUIs.clear();
     }
 }

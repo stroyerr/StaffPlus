@@ -23,19 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GUIObjects {
-    public GUI StaffLandingPage(SPlayer sp) {
-        List<GUISet> guiset = new ArrayList<>();
+    public static GUI StaffLandingPage(SPlayer sp) {
+        List<GUISet> guiset = new ArrayList<>(45);
         ItemStack itemToAdd;
-        for(int i = 0; i < 27; i++){
+        for(int i = 0; i < 45; i++){
+            itemToAdd = NewItem.createGuiItem(Material.BLACK_STAINED_GLASS_PANE, ChatColor.GRAY + "Staff+");
             if(i == 8){
                 itemToAdd = NewItem.createGuiItem(Material.SLIME_BALL, "Toggle Sidebar");
-                guiset.set(i, new GUISet(i, itemToAdd));
             }
-
-
+            guiset.add(new GUISet(i,itemToAdd));
         }
 
-        GUI gui = new GUI("Staff+", sp, 27, false, guiset);
+        GUI gui = new GUI("Staff+", sp, 45, false, guiset);
         return gui;
     }
 }

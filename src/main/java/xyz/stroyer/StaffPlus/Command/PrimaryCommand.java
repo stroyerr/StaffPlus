@@ -15,7 +15,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import xyz.stroyer.StaffPlus.GUI.GUIObjects;
 import xyz.stroyer.StaffPlus.Main;
+import xyz.stroyer.StaffPlus.Player.SPlayer;
 import xyz.stroyer.StaffPlus.Util.Send;
 
 public class PrimaryCommand implements CommandExecutor {
@@ -37,7 +39,7 @@ public class PrimaryCommand implements CommandExecutor {
             return true;
         }
 
-
+        SPlayer.getSPlayer(p).openGUI(GUIObjects.StaffLandingPage(SPlayer.getSPlayer(p)));
             return true;
         }
 }

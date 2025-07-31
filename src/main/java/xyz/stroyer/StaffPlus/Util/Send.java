@@ -12,8 +12,10 @@
 
 package xyz.stroyer.StaffPlus.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import xyz.stroyer.StaffPlus.Main;
 
 public class Send {
 
@@ -21,5 +23,15 @@ public class Send {
 
     public static void message(Player player, String message){
         player.sendMessage(prefix + message);
+    }
+
+    public static void console(String message){
+        Bukkit.getLogger().info("STAFF+: " + message);
+    }
+
+    public static void debug(String message){
+        if(Main.debugMode) {
+            Bukkit.getLogger().warning("[DEBUG] STAFF+: " + message);
+        }
     }
 }

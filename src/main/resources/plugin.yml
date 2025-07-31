@@ -1,0 +1,9 @@
+name: StaffPlus
+version: 1.0
+main: xyz.stroyer.StaffPlus.Main
+api-version: 1.21.8
+commands:
+  staff:
+    description: Open the Staff+ GUI
+    usage: /staff
+    aliases: [staffp, staffplus]
