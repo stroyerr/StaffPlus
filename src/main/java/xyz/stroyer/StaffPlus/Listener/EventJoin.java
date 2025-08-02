@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import xyz.stroyer.StaffPlus.Main;
 import xyz.stroyer.StaffPlus.Player.SPlayer;
+import xyz.stroyer.StaffPlus.Scoreboard.StaffBoard;
 import xyz.stroyer.StaffPlus.Util.Send;
 
 public class EventJoin implements Listener {
@@ -28,6 +29,23 @@ public class EventJoin implements Listener {
         }else{
             SPlayer sp = new SPlayer(e.getPlayer());
             Send.debug("Player " + e.getPlayer().getName() + " with UUID " + e.getPlayer().getUniqueId() + " does not have an SPlayer. One has been generated.");
+        }
+
+        SPlayer.getSPlayer(e.getPlayer()).updateUsername();
+
+        SPlayer.getSPlayer(e.getPlayer()).generateGUIList();
+
+        SPlayer.getSPlayer(e.getPlayer()).setJoinTimestamp(System.currentTimeMillis());
+
+        if (SPlayer.getSPlayer(e.getPlayer()).boardEnabled() && e.getPlayer().hasPermission("StaffPlus.Staff")){
+            StaffBoard.showScoreboard(SPlayer.getSPlayer(e.getPlayer()));
+        }
+
+        SPlayer sp = SPlayer.getSPlayer(e.getPlayer());
+        if(sp.getBukkitPlayer().hasPermission("StaffPlus.Staff")){
+            sp.setStaff(true);
+        }else{
+            sp.setStaff(false);
         }
     }
 }

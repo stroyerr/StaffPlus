@@ -12,18 +12,37 @@
 
 package xyz.stroyer.StaffPlus.Listener;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import xyz.stroyer.StaffPlus.Player.SPlayer;
+import xyz.stroyer.StaffPlus.Scoreboard.StaffBoard;
+import xyz.stroyer.StaffPlus.Util.NewItem;
+import xyz.stroyer.StaffPlus.Util.Send;
 
 public class EventInventoryClick implements Listener {
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent e){
-        if(SPlayer.getSPlayer((Player) e.getWhoClicked()).getActiveGUIs().size() > 0){
+        if(!(SPlayer.getSPlayer((Player) e.getWhoClicked()).getActiveGUIs().size() > 0)) {
+            return;
+        }
             e.setCancelled(true);
+        SPlayer sp = SPlayer.getSPlayer((Player) e.getWhoClicked());
+        Player p = (Player) e.getWhoClicked();
+        if (e.getCurrentItem().equals(NewItem.createGuiItem(Material.SLIME_BALL, "Toggle Sidebar"))){
+            if(sp.boardEnabled()){
+                sp.setBoardEnabled(false);
+                StaffBoard.hideScoreboard(sp);
+                Send.message(p, "Sidebar disabled.");
+            }else{
+                sp.setBoardEnabled(true);
+                StaffBoard.showScoreboard(sp);
+                Send.message(p,"Sidebar enabled.");
+            }
         }
     }
 }

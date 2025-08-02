@@ -15,27 +15,69 @@ package xyz.stroyer.StaffPlus.Player;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import xyz.stroyer.StaffPlus.GUI.GUI;
+import xyz.stroyer.StaffPlus.Util.Send;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SPlayer {
+public class SPlayer implements Serializable {
     private UUID UUID;
-    private List<GUI> activeGUIs;
-
+    private String username;
+    private transient List<GUI> activeGUIs;
     private static List<SPlayer> SPlayerList;
+    private boolean showBoard;
+    private boolean isStaff;
+    private List<PunishEvent> punishments;
+    private int staffBoardSchedulerIndex;
+    private long joinTimestamp;
+
+    public static List<SPlayer> getSPlayerList(){
+        return SPlayerList;
+    }
+
+    public static void setSPlayerList(List<SPlayer> spl){
+        SPlayerList = spl;
+    }
 
     public SPlayer(Player BukkitPlayer){
         this.UUID = BukkitPlayer.getUniqueId();
         this.activeGUIs = new ArrayList<>();
         SPlayerList.add(this);
+        if(BukkitPlayer.hasPermission("StaffPlus.Staff")){
+            this.showBoard = true;
+            this.isStaff = true;
+        }else{
+            this.showBoard = false;
+            this.isStaff = false;
+            this.punishments = new ArrayList<>();
+        }
+        this.staffBoardSchedulerIndex = -1;
+    }
+
+    public int getStaffBoardSchedulerIndex(){
+        return this.staffBoardSchedulerIndex;
+    }
+
+    public void setStaffBoardSchedulerIndex(int i){
+        this.staffBoardSchedulerIndex = i;
     }
 
     public SPlayer(UUID UUID){
         this.UUID = UUID;
         this.activeGUIs = new ArrayList<>();
         SPlayerList.add(this);
+        if(Bukkit.getPlayer(UUID).hasPermission("StaffPlus.Staff")){
+            this.showBoard = true;
+            this.isStaff = true;
+        }else{
+            this.showBoard = false;
+            this.isStaff = false;
+            this.punishments = new ArrayList<>();
+        }
+        this.staffBoardSchedulerIndex = -1;
     }
 
     public Player getBukkitPlayer(){
@@ -48,7 +90,7 @@ public class SPlayer {
 
     public void closeCurrentGUI(){
         this.getBukkitPlayer().closeInventory();
-        this.activeGUIs.clear();
+        this.activeGUIs = new ArrayList<>();
     }
 
     public void openGUI(GUI gui){
@@ -84,7 +126,68 @@ public class SPlayer {
     }
 
     public void inventoryClosed(){
-        this.closeCurrentGUI();
-        this.activeGUIs.clear();
+        this.activeGUIs = new ArrayList<>();
+    }
+
+    public void generateGUIList() {
+        this.activeGUIs = new ArrayList<>();
+    }
+
+    public boolean boardEnabled(){
+        return this.showBoard;
+    }
+
+    public void setBoardEnabled(boolean b) {
+        this.showBoard = b;
+    }
+
+    public void setStaff(boolean b) {
+        this.isStaff = b;
+    }
+
+    public boolean isStaff(){
+        return this.isStaff;
+    }
+
+    public void recordPunishment(String type, SPlayer staffMember, String reason){
+        this.punishments.add(new PunishEvent(type, LocalDateTime.now(), staffMember, reason));
+        Send.debug("Recorded punishment: TYPE - " + type + "; TIME - " + LocalDateTime.now().toString() + "; STAFF - " + staffMember + "; REASON - " + reason);
+        Send.debug("Player " + this.getUUID() + " now has " + this.punishments.size() + " punishments recorded.");
+    }
+
+    public void updateUsername(){
+        this.username = this.getBukkitPlayer().getName();
+    }
+
+    public String getUsername(){
+        return this.username;
+    }
+
+    /* public void assignStaffBoardSchedulerIndex() {
+        int id = 0;
+        List<Integer> activeIds = new ArrayList<>();
+        for (Player p : Bukkit.getOnlinePlayers()){
+            SPlayer sp = SPlayer.getSPlayer(p);
+            if(sp.getStaffBoardSchedulerIndex() == id) {
+                activeIds.add(id);
+                id ++;
+                if(activeIds.contains(id)){
+                    id++;
+                }
+            }
+        }
+        if (!activeIds.contains(id)){
+            this.setStaffBoardSchedulerIndex(id);
+        }else{
+            this.setStaffBoardSchedulerIndex(-2);
+        }
+    } */ //Redundant code
+
+    public void setJoinTimestamp(long timestamp) {
+        this.joinTimestamp = timestamp;
+    }
+
+    public long getJoinTimestamp() {
+        return this.joinTimestamp;
     }
 }

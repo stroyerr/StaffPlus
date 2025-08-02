@@ -23,6 +23,8 @@ public class EventInventoryClose implements Listener {
 
     @EventHandler
     public void InventoryClose(InventoryCloseEvent e){
-        SPlayer.getSPlayer((Player) e.getPlayer()).inventoryClosed();
+        if(SPlayer.hasSPlayer((Player) e.getPlayer())) {
+            SPlayer.getSPlayer((Player) e.getPlayer()).inventoryClosed();
+        }
     }
 }
