@@ -13,6 +13,9 @@
 package xyz.stroyer.StaffPlus.Util;
 
 import xyz.stroyer.StaffPlus.Player.SPlayer;
+import xyz.stroyer.StaffPlus.Tickets.Ticket;
+import xyz.stroyer.StaffPlus.Tickets.TicketCorrespondence;
+import xyz.stroyer.StaffPlus.Tickets.TicketCreator;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,18 +27,23 @@ public class DataManager {
 
         //Check and create directory
 
-        File dir = new File("./plugins/Staff+");
-        if (!dir.exists()){
-            dir.mkdir();
+        File dirE = new File("./plugins/Staff+");
+        if (!dirE.exists()){
+            dirE.mkdir();
             Send.console("Generating directory for Staff+. If this is not your first time running the problem, please report this error at stroyer.xyz");
             Send.console("If you have never used Staff+ before, ignore this message.");
         }else{
             Send.console("Saving Staff+ Data...");
         }
 
-        //Serialise and write SPlayerList
+        File dir = new File("./plugins/Staff+/data");
+        if (!dir.exists()){
+            dir.mkdir();
+        }else{}
 
-        File spdat = new File(dir, "SPlayers.data");
+        //Serialise and write data
+
+        File spdat = new File(dir, "StaffPlus.data");
 
         if(!spdat.exists()){
             try {
@@ -46,8 +54,8 @@ public class DataManager {
         try (FileOutputStream fos = new FileOutputStream(spdat);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
-            oos.writeObject(SPlayer.getSPlayerList());
-            Send.console("Player data saved.");
+            oos.writeObject(new SPDat());
+            Send.console("Staff+ data saved.");
 
         } catch (FileNotFoundException e) {
             Send.console("File not found: " + e.getMessage());
@@ -59,9 +67,9 @@ public class DataManager {
     }
 
     public static void loadSPData(){
-        List<SPlayer> spl = new ArrayList<>();
+        SPDat spl;
 
-        File dir = new File("./plugins/Staff+");
+        File dir = new File("./plugins/Staff+/data");
 
         if (!dir.exists()){
             dir.mkdir();
@@ -71,7 +79,7 @@ public class DataManager {
             Send.console("Loading Staff+ Data...");
         }
 
-        File spdat = new File(dir, "SPlayers.data");
+        File spdat = new File(dir, "StaffPlus.data");
 
         if(!spdat.exists()){
             try {
@@ -81,9 +89,9 @@ public class DataManager {
 
         try (FileInputStream fis = new FileInputStream(spdat);
              ObjectInputStream ois = new ObjectInputStream(fis);) {
-            spl = (ArrayList) ois.readObject();
-            Send.console("Loaded player data for " + spl.size() + " players.");
-            SPlayer.setSPlayerList(spl);
+            spl = (SPDat) ois.readObject();
+            spl.load();
+            Send.console("Loaded Staff+ data.");
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } catch (ClassNotFoundException c) {

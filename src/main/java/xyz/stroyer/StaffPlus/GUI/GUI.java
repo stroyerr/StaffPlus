@@ -28,6 +28,7 @@ public class GUI {
     public  boolean adminRequired; // whether StaffPlus.admin is required to access
     public  List<GUISet> GUISet = new ArrayList<>(); // set of all GUI icons and their positions
     public Inventory inventory; // inventory to be displayed and interacted with
+    public int page; // for menus with multiple pages, 0 by default
 
     public GUI(String name, SPlayer owner, int size, boolean adminRequired, List<GUISet> GUISet){
         this.name = name;
@@ -36,6 +37,17 @@ public class GUI {
         this.adminRequired = adminRequired;
         this.GUISet = GUISet;
         this.generateInventory();
+        this.page = 0;
+    }
+
+    public GUI(String name, SPlayer owner, int size, boolean adminRequired, List<GUISet> GUISet, int page){
+        this.name = name;
+        this.owner = owner;
+        this.size = size;
+        this.adminRequired = adminRequired;
+        this.GUISet = GUISet;
+        this.generateInventory();
+        this.page = page;
     }
 
     private void generateInventory(){
@@ -51,4 +63,7 @@ public class GUI {
         return this.inventory;
     }
 
+    public String getName() {
+        return this.name;
+    }
 }

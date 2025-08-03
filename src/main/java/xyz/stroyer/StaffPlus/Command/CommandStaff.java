@@ -20,9 +20,9 @@ import xyz.stroyer.StaffPlus.Main;
 import xyz.stroyer.StaffPlus.Player.SPlayer;
 import xyz.stroyer.StaffPlus.Util.Send;
 
-public class PrimaryCommand implements CommandExecutor {
+public class CommandStaff implements CommandExecutor {
     private Main main;
-    public PrimaryCommand(Main main){this.main = main;}
+    public CommandStaff(Main main){this.main = main;}
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

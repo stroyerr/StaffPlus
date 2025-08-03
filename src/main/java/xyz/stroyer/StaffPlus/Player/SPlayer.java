@@ -15,6 +15,9 @@ package xyz.stroyer.StaffPlus.Player;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import xyz.stroyer.StaffPlus.GUI.GUI;
+import xyz.stroyer.StaffPlus.Tickets.Ticket;
+import xyz.stroyer.StaffPlus.Tickets.TicketCorrespondenceEditor;
+import xyz.stroyer.StaffPlus.Tickets.TicketCreator;
 import xyz.stroyer.StaffPlus.Util.Send;
 
 import java.io.Serializable;
@@ -33,6 +36,10 @@ public class SPlayer implements Serializable {
     private List<PunishEvent> punishments;
     private int staffBoardSchedulerIndex;
     private long joinTimestamp;
+    private transient TicketCreator ticketBeingCreated;
+    private List<Ticket> tickets;
+    private TicketCorrespondenceEditor ticketCorrespondenceEditor;
+    private List<MailItem> mailItems;
 
     public static List<SPlayer> getSPlayerList(){
         return SPlayerList;
@@ -55,6 +62,8 @@ public class SPlayer implements Serializable {
             this.punishments = new ArrayList<>();
         }
         this.staffBoardSchedulerIndex = -1;
+        this.tickets = new ArrayList<>();
+        this.mailItems = new ArrayList<>();
     }
 
     public int getStaffBoardSchedulerIndex(){
@@ -78,6 +87,8 @@ public class SPlayer implements Serializable {
             this.punishments = new ArrayList<>();
         }
         this.staffBoardSchedulerIndex = -1;
+        this.tickets = new ArrayList<>();
+        this.mailItems = new ArrayList<>();
     }
 
     public Player getBukkitPlayer(){
@@ -91,6 +102,22 @@ public class SPlayer implements Serializable {
     public void closeCurrentGUI(){
         this.getBukkitPlayer().closeInventory();
         this.activeGUIs = new ArrayList<>();
+    }
+
+    public void setTicketBeingCreated(TicketCreator tc) {
+        this.ticketBeingCreated = tc;
+    }
+
+    public void setTicketCorrespondenceEditor(TicketCorrespondenceEditor tce) {
+        this.ticketCorrespondenceEditor = tce;
+    }
+
+    public TicketCorrespondenceEditor getTicketCorrespondenceEditor(){
+        return this.ticketCorrespondenceEditor;
+    }
+
+    public TicketCreator getTicketBeingCreated() {
+        return this.ticketBeingCreated;
     }
 
     public void openGUI(GUI gui){
@@ -189,5 +216,33 @@ public class SPlayer implements Serializable {
 
     public long getJoinTimestamp() {
         return this.joinTimestamp;
+    }
+
+    public void addTicket(Ticket ticket) {
+        this.tickets.add(ticket);
+    }
+
+    public List<Ticket> getTickets(){
+        return this.tickets;
+    }
+
+    public List<Ticket> getOpenTickets(){
+        List<Ticket> ts = new ArrayList<>();
+        for (Ticket t: this.tickets) {
+            if (t.getStatus() == 0) {
+                ts.add(t);
+            }
+        }
+        return ts;
+    }
+
+    public List<Ticket> getClosedTickets(){
+        List<Ticket> ts = new ArrayList<>();
+        for (Ticket t: this.tickets) {
+            if (t.getStatus() == 1) {
+                ts.add(t);
+            }
+        }
+        return ts;
     }
 }

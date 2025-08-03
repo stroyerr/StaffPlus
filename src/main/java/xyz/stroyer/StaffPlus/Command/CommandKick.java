@@ -16,7 +16,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import xyz.stroyer.StaffPlus.GUI.GUIObjects;
 import xyz.stroyer.StaffPlus.Main;
 import xyz.stroyer.StaffPlus.Player.SPlayer;
 import xyz.stroyer.StaffPlus.Punishments.Punish;
@@ -24,9 +23,9 @@ import xyz.stroyer.StaffPlus.Util.Send;
 
 import java.util.Arrays;
 
-public class Kick implements CommandExecutor {
+public class CommandKick implements CommandExecutor {
     private Main main;
-    public Kick(Main main){this.main = main;}
+    public CommandKick(Main main){this.main = main;}
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

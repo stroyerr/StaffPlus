@@ -11,3 +11,7 @@ commands:
     description: Kick Player from Server
     usage: /kick [player] {reason}
     aliases: []
+  ticket:
+    description: Open the ticket menu
+    usage: /ticket
+    aliases: [tickets]

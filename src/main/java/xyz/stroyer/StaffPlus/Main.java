@@ -14,20 +14,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import xyz.stroyer.StaffPlus.Command.Kick;
-import xyz.stroyer.StaffPlus.Command.PrimaryCommand;
-import xyz.stroyer.StaffPlus.Listener.EventInventoryClick;
-import xyz.stroyer.StaffPlus.Listener.EventInventoryClose;
-import xyz.stroyer.StaffPlus.Listener.EventJoin;
-import xyz.stroyer.StaffPlus.Listener.EventPlayerLeave;
+import xyz.stroyer.StaffPlus.Command.CommandKick;
+import xyz.stroyer.StaffPlus.Command.CommandStaff;
+import xyz.stroyer.StaffPlus.Command.CommandTicket;
+import xyz.stroyer.StaffPlus.Listener.*;
 import xyz.stroyer.StaffPlus.Player.SPlayer;
 import xyz.stroyer.StaffPlus.Server.Core;
+import xyz.stroyer.StaffPlus.Tickets.Ticket;
+import xyz.stroyer.StaffPlus.Tickets.TicketCorrespondence;
 import xyz.stroyer.StaffPlus.Util.DataManager;
 import xyz.stroyer.StaffPlus.Util.Send;
 import xyz.stroyer.StaffPlus.Util.StaffData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main extends JavaPlugin {
 
@@ -49,44 +46,42 @@ public class Main extends JavaPlugin {
     public void onEnable() {
 
         instance = this;
-
         isReload = false;
 
         //Set start time
         StaffData.serverStartTime = (System.currentTimeMillis());
 
-        //Load SPlayer Data
-
+        //Load Data
+        Ticket.init();
+        TicketCorrespondence.init();
         SPlayer.generateSPlayers();
+
         DataManager.loadSPData();
 
-        //Register events
-
+        //Register event listeners
         getServer().getPluginManager().registerEvents(new EventJoin(), this);
         getServer().getPluginManager().registerEvents(new EventInventoryClick(), this);
         getServer().getPluginManager().registerEvents(new EventInventoryClose(), this);
         getServer().getPluginManager().registerEvents(new EventPlayerLeave(), this);
+        getServer().getPluginManager().registerEvents(new EventPlayerChat(), this);
 
         //Register commands
+        this.getCommand("staff").setExecutor(new CommandStaff(this));
+        this.getCommand("ticket").setExecutor(new CommandTicket(this));
 
-        this.getCommand("staff").setExecutor(new PrimaryCommand(this));
-
+        //Register priority commands
         getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
-            // Dekayed Registration
-            getCommand("kick").setExecutor(new Kick(this));
-        }, 40L); // Delay by 1 tick
+            getCommand("kick").setExecutor(new CommandKick(this));
+        }, 40L);
 
         //Start complete
-
-        Send.console("Thank you for choosing Staff+");
-        Send.console("Report any bugs or suggestions at stroyer.xyz");
+        Send.console("Thank you for choosing Staff+, report any bugs at stroyer.xyz");
     }
 
     @Override
     public void onDisable() {
 
-        //Save SP Data
-
+        //Save Data
         DataManager.saveSPData();
 
         //Check if server is being reloaded. Certain code must be executed if so.
